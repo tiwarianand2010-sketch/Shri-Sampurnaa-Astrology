@@ -19,10 +19,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Flutter Stable
+      - name: Setup Flutter Modern Version
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.9'
+          flutter-version: '3.22.2'
           channel: 'stable'
 
       - name: Fix All Android V2 Structures and Paths
@@ -69,9 +69,8 @@ jobs:
 
           cp android/app/src/main/AndroidManifest.xml android/AndroidManifest.xml || true
 
-      - name: Get Dependencies with Override Support
-        run: |
-          flutter pub get --no-example
+      - name: Get Dependencies
+        run: flutter pub get
 
       - name: Build APK Release
         run: flutter build apk --release --no-tree-shake-icons
