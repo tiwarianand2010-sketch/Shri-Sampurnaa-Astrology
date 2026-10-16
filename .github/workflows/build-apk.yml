@@ -19,13 +19,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Compatible Flutter Version
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.9'
+          flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Auto Setup Complete Android Structure
+      - name: Fix Android V2 Embedding & Pubspec Overrides
         run: |
           mkdir -p android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology
           
@@ -69,7 +69,14 @@ jobs:
 
           cp android/app/src/main/AndroidManifest.xml android/AndroidManifest.xml || true
 
-      - name: Fetch Dependencies
+          # Create dependency override to fix firebase and http conflict automatically
+          cat << 'EOF' > pubspec.overrides.yaml
+          dependency_overrides:
+            firebase_core: ^3.4.0
+            http: ^1.2.0
+          EOF
+
+      - name: Get Dependencies
         run: flutter pub get
 
       - name: Build APK Release
