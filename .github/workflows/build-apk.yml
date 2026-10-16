@@ -25,41 +25,15 @@ jobs:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Force Fix Android v2 Embedding
+      - name: Force Fix Android v2 Embedding Completely
         run: |
-          mkdir -p android/app/src/main
-          cat << 'EOF' > android/app/src/main/AndroidManifest.xml
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application
-                  android:label="Shri Sampurna Astrology"
-                  android:name="${applicationName}"
-                  android:icon="@mipmap/ic_launcher">
-                  
-                  <meta-data
-                      android:name="flutterEmbedding"
-                      android:value="2" />
+          mkdir -p android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology
+          
+          printf '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    <application android:label="Shri Sampurna Astrology" android:name="${applicationName}" android:icon="@mipmap/ic_launcher">\n        <meta-data android:name="flutterEmbedding" android:value="2" />\n        <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">\n            <meta-data android:name="io.flutter.app.android.SplashScreenUntilFirstFrame" android:value="true" />\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN"/>\n                <category android:name="android.intent.category.LAUNCHER"/>\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>' > android/app/src/main/AndroidManifest.xml
 
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true"
-                      android:launchMode="singleTop"
-                      android:theme="@style/LaunchTheme"
-                      android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-                      android:hardwareAccelerated="true"
-                      android:windowSoftInputMode="adjustResize">
-                      
-                      <meta-data
-                        android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-                        android:value="true" />
-                        
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
+          printf 'package com.example.shri_sampurnaa_astrology\n\nimport io.flutter.embedding.android.FlutterActivity\n\nclass MainActivity: FlutterActivity() {\n}' > android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology/MainActivity.kt
+          
+          rm -rf android/app/src/main/java
 
       - name: Get dependencies
         run: flutter pub get --no-example
