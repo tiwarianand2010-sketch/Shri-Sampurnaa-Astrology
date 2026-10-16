@@ -68,8 +68,11 @@ jobs:
 
           cp android/app/src/main/AndroidManifest.xml android/AndroidManifest.xml || true
 
-      - name: Build APK Release with Verbose Logs
-        run: flutter build apk --release --no-tree-shake-icons --verbose
+      - name: Clean and Build APK Release
+        run: |
+          flutter clean
+          flutter pub get
+          flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
