@@ -25,26 +25,18 @@ jobs:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Auto Fix Android V2 Embedding Everywhere
+      - name: Fix Android V2 Embedding Forcefully
         run: |
-          # 1. Update AndroidManifest.xml with v2 embedding
-          MANIFEST_PATH=$(find android/app/src/main -name "AndroidManifest.xml" | head -n 1)
-          if [ -z "$MANIFEST_PATH" ]; then
-            mkdir -p android/app/src/main
-            MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
-          fi
-          
-          cat << 'EOF' > "$MANIFEST_PATH"
+          mkdir -p android/app/src/main
+          cat << 'EOF' > android/app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <application
                   android:label="Shri Sampurna Astrology"
                   android:name="${applicationName}"
                   android:icon="@mipmap/ic_launcher">
-                  
                   <meta-data
                       android:name="flutterEmbedding"
                       android:value="2" />
-
                   <activity
                       android:name=".MainActivity"
                       android:exported="true"
@@ -53,11 +45,9 @@ jobs:
                       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
                       android:hardwareAccelerated="true"
                       android:windowSoftInputMode="adjustResize">
-                      
                       <meta-data
                         android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                         android:value="true" />
-                        
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN"/>
                           <category android:name="android.intent.category.LAUNCHER"/>
@@ -67,21 +57,19 @@ jobs:
           </manifest>
           EOF
 
-          # 2. Find and convert any MainActivity to v2 embedding
-          find android/app/src/main -name "MainActivity.*" | while read file; do
-            echo "Upgrading $file to v2 embedding"
-            pkg=$(grep -m 1 "package " "$file" || echo "package com.example.shri_sampurnaa_astrology;")
-            cat << EOF > "$file"
-          $pkg
+          rm -rf android/app/src/main/java android/app/src/main/kotlin
+          mkdir -p android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology
+          cat << 'EOF' > android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology/MainActivity.kt
+          package com.example.shri_sampurnaa_astrology
+
           import io.flutter.embedding.android.FlutterActivity
 
           class MainActivity: FlutterActivity() {
           }
           EOF
-          done
 
       - name: Get dependencies
-        run: flutter pub get --no-example
+        run: flutter pub get
 
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
