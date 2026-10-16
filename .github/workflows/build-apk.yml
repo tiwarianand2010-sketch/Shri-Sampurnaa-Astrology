@@ -19,13 +19,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Flutter Modern Version
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Fix All Android V2 Structures and Paths
+      - name: Fix Android V2 Embedding Structure
         run: |
           mkdir -p android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology
           
@@ -69,7 +69,7 @@ jobs:
 
           cp android/app/src/main/AndroidManifest.xml android/AndroidManifest.xml || true
 
-      - name: Get Dependencies
+      - name: Fetch Dependencies
         run: flutter pub get
 
       - name: Build APK Release
