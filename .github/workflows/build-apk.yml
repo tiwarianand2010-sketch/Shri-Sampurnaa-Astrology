@@ -19,12 +19,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Flutter
+      - name: Setup Compatible Flutter Version
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.16.9'
           channel: 'stable'
 
-      - name: Fix Android V2 Embedding Files
+      - name: Auto Setup Complete Android Structure
         run: |
           mkdir -p android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology
           
@@ -68,11 +69,11 @@ jobs:
 
           cp android/app/src/main/AndroidManifest.xml android/AndroidManifest.xml || true
 
-      - name: Clean and Build APK Release
-        run: |
-          flutter clean
-          flutter pub get
-          flutter build apk --release --no-tree-shake-icons
+      - name: Fetch Dependencies
+        run: flutter pub get
+
+      - name: Build APK Release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
