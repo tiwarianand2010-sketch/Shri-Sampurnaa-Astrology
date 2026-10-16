@@ -17,15 +17,59 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
-      - name: Setup Flutter Compatible Version
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.10'
+          flutter-version: '3.10.6'
           channel: 'stable'
 
-      - name: Get dependencies
+      - name: Force Fix Android Files Structure
+        run: |
+          mkdir -p android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology
+          
+          cat << 'EOF' > android/app/src/main/AndroidManifest.xml
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:label="Shri Sampurna Astrology"
+                  android:name="${applicationName}"
+                  android:icon="@mipmap/ic_launcher">
+                  <meta-data
+                      android:name="flutterEmbedding"
+                      android:value="2" />
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:launchMode="singleTop"
+                      android:theme="@style/LaunchTheme"
+                      android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+                      android:hardwareAccelerated="true"
+                      android:windowSoftInputMode="adjustResize">
+                      <meta-data
+                        android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+                        android:value="true" />
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat << 'EOF' > android/app/src/main/kotlin/com/example/shri_sampurnaa_astrology/MainActivity.kt
+          package com.example.shri_sampurnaa_astrology
+
+          import io.flutter.embedding.android.FlutterActivity
+
+          class MainActivity: FlutterActivity() {
+          }
+          EOF
+
+          cp android/app/src/main/AndroidManifest.xml android/AndroidManifest.xml || true
+
+      - name: Get Dependencies
         run: flutter pub get
 
       - name: Build APK Release
